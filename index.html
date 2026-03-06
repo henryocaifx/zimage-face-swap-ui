@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FaceSwap Pro • ZImage</title>
+    <title>AIFX Cast</title>
     <meta name="description" content="AI Face Swapping Application powered by ComfyUI">
 
     <!-- Google Fonts -->
@@ -21,17 +21,16 @@
     <main class="app-container">
         <header class="app-header">
             <div class="logo-box">
-                <div class="logo-icon"></div>
-                <h1>FaceSwap Pro</h1>
+                <img src="logo1.png" alt="AIFX Cast" class="main-logo">
             </div>
-            <p>Seamlessly integrate your subject with UltraFlux and SAM3 grounding.</p>
+            <p>Instant, high-fidelity AI face swaps in a single click.</p>
         </header>
 
         <section class="card glass-panel" id="mainCard">
             <form id="swapForm" aria-label="Face swap form">
                 <!-- Image Upload Area -->
                 <div class="input-group">
-                    <label for="imageUpload" class="group-label">Source Environment Image</label>
+                    <label for="imageUpload" class="group-label">Source Image</label>
                     <div class="upload-area" id="dropZone">
                         <input type="file" id="imageUpload" accept="image/jpeg, image/png, image/webp" required hidden>
                         <div class="upload-content" id="uploadContent">
@@ -50,17 +49,17 @@
 
                 <!-- Settings Area -->
                 <div class="input-group">
-                    <label for="loraInput" class="group-label">Face LoRA Name</label>
+                    <label for="loraInput" class="group-label">Character you want to swap to</label>
                     <div class="input-wrapper">
                         <svg class="icon-input" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                             <circle cx="12" cy="7" r="4"></circle>
                         </svg>
-                        <input type="text" id="loraInput" placeholder="e.g. nicholas-tse.safetensors"
-                            value="nicholas-tse.safetensors" required>
+                        <select id="loraInput" required>
+                            <option value="" disabled selected>Loading LoRAs...</option>
+                        </select>
                     </div>
-                    <small class="helper-text">Ensure the specified `.safetensors` file is located in the UI's models
-                        directory.</small>
+                    <small class="helper-text">When generating, do not refresh the page.</small>
                 </div>
 
                 <!-- Advanced ComfyUI Setting -->
@@ -102,6 +101,12 @@
                 <button class="btn-secondary outline" id="resetBtn">Start Over</button>
             </div>
         </section>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <img src="logo2.png" alt="One Cool AIFX Logo" class="footer-logo">
+            <p>&copy; 2026 One Cool AIFX. All rights reserved.</p>
+        </footer>
 
     </main>
 

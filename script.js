@@ -369,6 +369,52 @@ let selectedFile = null;
 let clientId = Math.random().toString(36).substring(2, 15);
 let socket = null;
 
+// Fetch available LoRAs from ComfyUI API
+async function fetchLoras() {
+  const baseUrl = apiUrlInput.value.trim().replace(/\/$/, '');
+  try {
+    loraInput.innerHTML = '<option value="" disabled selected>Loading LoRAs...</option>';
+    const response = await fetch(`${baseUrl}/object_info/LoraLoaderModelOnly`);
+    if (!response.ok) throw new Error('Failed to fetch object info');
+
+    const data = await response.json();
+    const loras = data.LoraLoaderModelOnly.input.required.lora_name[0];
+
+    loraInput.innerHTML = ''; // Clear loading option
+    if (loras && loras.length > 0) {
+      loras.forEach(lora => {
+        const option = document.createElement('option');
+        option.value = lora;
+        // Remove file extension for display text
+        option.textContent = lora.replace(/\.[^/.]+$/, "");
+
+        // Select nicholas-tse if it exists
+        if (lora.includes('nicholas-tse')) {
+          option.selected = true;
+        }
+
+        loraInput.appendChild(option);
+      });
+
+      // If none selected but we have options, select the first one
+      if (loraInput.selectedIndex === -1) {
+        loraInput.selectedIndex = 0;
+      }
+    } else {
+      loraInput.innerHTML = '<option value="" disabled selected>No LoRAs found</option>';
+    }
+  } catch (error) {
+    console.error("Error fetching LoRAs:", error);
+    loraInput.innerHTML = '<option value="" disabled selected>Error loading LoRAs</option>';
+  }
+}
+
+// Initial fetch on page load
+window.addEventListener('DOMContentLoaded', fetchLoras);
+
+// Fetch again if API URL changes
+apiUrlInput.addEventListener('change', fetchLoras);
+
 // Helper to disable UI
 function setLoading(isLoading) {
   if (isLoading) {
