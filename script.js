@@ -369,51 +369,13 @@ let selectedFile = null;
 let clientId = Math.random().toString(36).substring(2, 15);
 let socket = null;
 
-// Fetch available LoRAs from ComfyUI API
-async function fetchLoras() {
-  const baseUrl = apiUrlInput.value.trim().replace(/\/$/, '');
-  try {
-    loraInput.innerHTML = '<option value="" disabled selected>Loading LoRAs...</option>';
-    const response = await fetch(`${baseUrl}/object_info/LoraLoaderModelOnly`);
-    if (!response.ok) throw new Error('Failed to fetch object info');
 
-    const data = await response.json();
-    const loras = data.LoraLoaderModelOnly.input.required.lora_name[0];
+window.addEventListener('DOMContentLoaded', () => {
+  // Force the value to 127.0.0.1 to ensure it never uses network IPs
+  apiUrlInput.value = 'http://127.0.0.1:8188';
+});
 
-    loraInput.innerHTML = ''; // Clear loading option
-    if (loras && loras.length > 0) {
-      loras.forEach(lora => {
-        const option = document.createElement('option');
-        option.value = lora;
-        // Remove file extension for display text
-        option.textContent = lora.replace(/\.[^/.]+$/, "");
 
-        // Select nicholas-tse if it exists
-        if (lora.includes('nicholas-tse')) {
-          option.selected = true;
-        }
-
-        loraInput.appendChild(option);
-      });
-
-      // If none selected but we have options, select the first one
-      if (loraInput.selectedIndex === -1) {
-        loraInput.selectedIndex = 0;
-      }
-    } else {
-      loraInput.innerHTML = '<option value="" disabled selected>No LoRAs found</option>';
-    }
-  } catch (error) {
-    console.error("Error fetching LoRAs:", error);
-    loraInput.innerHTML = '<option value="" disabled selected>Error loading LoRAs</option>';
-  }
-}
-
-// Initial fetch on page load
-window.addEventListener('DOMContentLoaded', fetchLoras);
-
-// Fetch again if API URL changes
-apiUrlInput.addEventListener('change', fetchLoras);
 
 // Helper to disable UI
 function setLoading(isLoading) {
@@ -581,6 +543,16 @@ form.addEventListener('submit', async (e) => {
   }
 
   let baseUrl = apiUrlInput.value.trim().replace(/\/$/, '');
+
+  // Adaptive mapping for other devices:
+  // If we are accessing this UI via an IP (like 192.168.x.x) but the API is set to 127.0.0.1,
+  // we automatically route the request to the server's IP so it doesn't fail on the other device.
+  const hostname = window.location.hostname;
+  if (hostname && hostname !== 'localhost' && hostname !== '127.0.0.1' && baseUrl.includes('127.0.0.1')) {
+    baseUrl = baseUrl.replace('127.0.0.1', hostname);
+    console.log(`Adapting API request to server IP: ${baseUrl}`);
+  }
+
   const loraName = loraInput.value.trim();
 
   setLoading(true);
@@ -650,9 +622,10 @@ form.addEventListener('submit', async (e) => {
 
   } catch (err) {
     setLoading(false);
+    const errorMsg = `Failed to reach API at: ${baseUrl}\n\nReason: ${err.message}\n\nTroubleshooting:\n1. Ensure your PC is on the same Wi-Fi.\n2. Ensure you ran the 'netsh' bridge command on your PC.\n3. Check if your PC firewall is blocking port 8188.`;
     updateStatus(`Error: ${err.message}`, 0);
     console.error(err);
-    alert(`Failed: ${err.message}. Please insure ComfyUI is running exactly at the given URL with --enable-cors-header=*`);
+    alert(errorMsg);
   }
 });
 
