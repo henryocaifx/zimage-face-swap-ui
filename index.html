@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FaceSwap Pro • ZImage</title>
+    <meta name="description" content="AI Face Swapping Application powered by ComfyUI">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="background-animation"></div>
+
+    <main class="app-container">
+        <header class="app-header">
+            <div class="logo-box">
+                <div class="logo-icon"></div>
+                <h1>FaceSwap Pro</h1>
+            </div>
+            <p>Seamlessly integrate your subject with UltraFlux and SAM3 grounding.</p>
+        </header>
+
+        <section class="card glass-panel" id="mainCard">
+            <form id="swapForm" aria-label="Face swap form">
+                <!-- Image Upload Area -->
+                <div class="input-group">
+                    <label for="imageUpload" class="group-label">Source Environment Image</label>
+                    <div class="upload-area" id="dropZone">
+                        <input type="file" id="imageUpload" accept="image/jpeg, image/png, image/webp" required hidden>
+                        <div class="upload-content" id="uploadContent">
+                            <svg class="icon-upload" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="17 8 12 3 7 8"></polyline>
+                                <line x1="12" y1="3" x2="12" y2="15"></line>
+                            </svg>
+                            <span class="upload-text">Click to upload or drag & drop</span>
+                            <span class="upload-sub">Supports JPG, PNG (Max 10MB)</span>
+                        </div>
+                        <img id="imagePreview" alt="Image preview" class="hidden">
+                    </div>
+                </div>
+
+                <!-- Settings Area -->
+                <div class="input-group">
+                    <label for="loraInput" class="group-label">Face LoRA Name</label>
+                    <div class="input-wrapper">
+                        <svg class="icon-input" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                        <input type="text" id="loraInput" placeholder="e.g. nicholas-tse.safetensors"
+                            value="nicholas-tse.safetensors" required>
+                    </div>
+                    <small class="helper-text">Ensure the specified `.safetensors` file is located in the UI's models
+                        directory.</small>
+                </div>
+
+                <!-- Advanced ComfyUI Setting -->
+                <div class="input-group">
+                    <label for="apiUrl" class="group-label">ComfyUI API Endpoint</label>
+                    <div class="input-wrapper">
+                        <svg class="icon-input" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                        </svg>
+                        <input type="url" id="apiUrl" value="http://127.0.0.1:8188" required>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="btn-primary" id="submitBtn">
+                    <span class="btn-text">Generate Output</span>
+                    <div class="spinner hidden" id="loadingSpinner"></div>
+                </button>
+            </form>
+        </section>
+
+        <!-- Progress and Status -->
+        <section class="status-panel hidden" id="statusPanel">
+            <div class="progress-bar-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            <p id="statusText">Initializing transformation...</p>
+        </section>
+
+        <!-- Result Gallery -->
+        <section class="result-panel hidden" id="resultPanel">
+            <h2 class="result-title">Final Result</h2>
+            <div class="result-frame">
+                <img id="resultImage" alt="Generated Swapped Face Result">
+            </div>
+            <div class="action-buttons">
+                <button class="btn-secondary" id="downloadBtn">Download Image</button>
+                <button class="btn-secondary outline" id="resetBtn">Start Over</button>
+            </div>
+        </section>
+
+    </main>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
